@@ -1,0 +1,67 @@
+﻿@model List<CaseStudyApp.API.Dtos.NoteDto>
+
+@section styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+}
+
+<h2>Notes</h2>
+
+<div id="jstree"></div>
+
+@section scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+    <script>
+        $('#jstree').jstree({
+            "core": {
+                "themes": {
+                    "variant": "large"
+                },
+                "data": @Html.Raw(ViewBag.Notes)
+            },
+            "plugins": ["wholerow", "contextmenu"],
+            "contextmenu": {
+                items: function ($node) {
+                    return {
+                        "Create": {
+                            "label": "Create",
+                            "action": function (obj) {
+                                window.location.href = '/Home/Create?parentId=' + $node.id;
+                            },
+                        },
+                        "Detail": {
+                            "label": "Detail",
+                            "action": function (obj) {
+                                alert($node.data);
+                            },
+                        },
+                        "del": {
+                            "label": "Delete",
+                            "action": function (obj) {
+                                $.ajax({
+                                    url: '/Home/Delete/' + $node.id,
+                                    type: 'DELETE',
+                                    success: function (result) {
+                                        setTimeout(function () {
+                                            alert("Silme işlemi başarılı");
+                                            window.location.reload();
+                                        }, 2000);
+                                    },
+                                    error: function (error) {
+                                        alert('Bir hata oluştu: ' + error);
+                                    }
+                                });
+                            },
+                        }
+                    }
+                },
+            }
+        });
+    </script>
+
+    <div class="text-center">
+        <a href="/Home/Create" class="btn btn-primary">Ana Not Oluştur</a>
+    </div>
+}
